@@ -1,0 +1,117 @@
+openapi: "3.1.0"
+info:
+  title: Fluency AI API — Quiz
+  version: "1.0.0"
+
+paths:
+  /api/v1/quiz/{id}/answer:
+    post:
+      summary: Submete resposta a um quiz
+      description: >
+        Processa a resposta do aluno a um quiz criado pela QuizTool durante o chat.
+        Retorna feedback imediato com correct, score e explicação.
+        Retorna 422 se o quiz já foi respondido.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID do quiz
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [answer]
+              properties:
+                answer:
+                  type: string
+                  maxLength: 1000
+                  description: Resposta do aluno
+      responses:
+        "200":
+          description: Resposta processada
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - description: Resposta correta
+                    type: object
+                    properties:
+                      correct:
+                        type: boolean
+                        example: true
+                      score:
+                        type: number
+                        example: 1.0
+                      explanation:
+                        type: string
+                  - description: Resposta incorreta
+                    type: object
+                    properties:
+                      correct:
+                        type: boolean
+                        example: false
+                      score:
+                        type: number
+                        example: 0.0
+                      correct_answer:
+                        type: string
+                      explanation:
+                        type: string
+        "422":
+          description: Quiz já respondido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Quiz já foi respondido"
+
+components:
+  schemas:
+    Quiz:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        student_id:
+          type: string
+          format: uuid
+        session_id:
+          type: string
+        type:
+          type: string
+          enum: [multiple_choice, fill_in_blank, translation, error_correction]
+        topic:
+          type: string
+        question:
+          type: string
+        options_json:
+          type: array
+          items:
+            type: string
+          nullable: true
+        correct_answer:
+          type: string
+        explanation:
+          type: string
+        student_answer:
+          type: string
+          nullable: true
+        score:
+          type: number
+          nullable: true
+        status:
+          type: string
+          enum: [pending, answered]
+        answered_at:
+          type: string
+          format: date-time
+          nullable: true
