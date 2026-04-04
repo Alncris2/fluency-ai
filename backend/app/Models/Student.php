@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
+
+class Student extends Model
+{
+    use HasUuids;
+
+    protected $fillable = [
+        'name',
+        'email',
+        'level',
+        'preferences',
+        'subscription_plan',
+        'streak_current',
+        'streak_best',
+    ];
+
+    protected $casts = [
+        'preferences' => 'array',
+    ];
+}
