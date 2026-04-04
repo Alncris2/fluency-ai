@@ -3,6 +3,7 @@
 namespace App\Ai\Agents;
 
 use App\Ai\Tools\GetStudentProgressTool;
+use App\Ai\Tools\QuizTool;
 use App\Ai\Tools\SaveLearningNoteTool;
 use App\Models\Student;
 use Illuminate\Support\Facades\Redis;
@@ -104,6 +105,7 @@ class EnglishTeacherAgent implements Agent, Conversational, HasTools
         return [
             new GetStudentProgressTool($this->student),
             new SaveLearningNoteTool($this->student),
+            new QuizTool($this->student, $this->sessionId),
         ];
     }
 

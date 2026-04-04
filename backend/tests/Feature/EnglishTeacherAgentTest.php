@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Ai\Agents\EnglishTeacherAgent;
 use App\Ai\Tools\GetStudentProgressTool;
+use App\Ai\Tools\QuizTool;
 use App\Ai\Tools\SaveLearningNoteTool;
 use App\Models\Student;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -85,10 +86,11 @@ class EnglishTeacherAgentTest extends TestCase
 
         $tools = iterator_to_array($agent->tools());
 
-        $this->assertCount(2, $tools);
+        $this->assertCount(3, $tools);
         $this->assertContainsOnlyInstancesOf(Tool::class, $tools);
         $this->assertInstanceOf(GetStudentProgressTool::class, $tools[0]);
         $this->assertInstanceOf(SaveLearningNoteTool::class, $tools[1]);
+        $this->assertInstanceOf(QuizTool::class, $tools[2]);
     }
 
     public function test_history_is_stored_and_retrieved_from_redis(): void
