@@ -44,7 +44,6 @@ export class AudienceComponent {
             fillColor: 'var(--bs-primary)',
             strokeColor: 'var(--bs-card-bg)',
             strokeWidth: 4,
-            radius: 5,
           },
           label: {
             borderWidth: 1,

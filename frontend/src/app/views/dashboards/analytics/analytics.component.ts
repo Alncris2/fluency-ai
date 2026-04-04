@@ -5,7 +5,6 @@ import { VisitorsComponent } from './components/visitors/visitors.component'
 import { BrowserComponent } from './components/browser/browser.component'
 import { TotalVisitsComponent } from './components/total-visits/total-visits.component'
 import { TrafficSourceComponent } from './components/traffic-source/traffic-source.component'
-import { OrganicTrafficComponent } from './components/organic-traffic/organic-traffic.component'
 
 @Component({
   selector: 'app-analytics',
@@ -17,7 +16,6 @@ import { OrganicTrafficComponent } from './components/organic-traffic/organic-tr
     BrowserComponent,
     TotalVisitsComponent,
     TrafficSourceComponent,
-    OrganicTrafficComponent,
   ],
   templateUrl: './analytics.component.html',
   styles: ``,
