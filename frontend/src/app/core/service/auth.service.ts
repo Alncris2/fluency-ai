@@ -9,7 +9,7 @@ import { User } from '../helpers/fake-backend'
 export class AuthenticationService {
   user: User | null = null
 
-  public readonly authSessionKey = '_RIZZ_AUTH_SESSION_KEY_'
+  public readonly authSessionKey = '_FLUENCY_SESSION_'
   private cookieService = inject(CookieService)
 
   constructor(private http: HttpClient) {}

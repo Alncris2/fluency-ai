@@ -17,11 +17,13 @@ import { rootReducer } from './store'
 import { DatePipe, DecimalPipe } from '@angular/common'
 import { AuthenticationEffects } from './store/authentication/authentication.effects'
 import {
+  HTTP_INTERCEPTORS,
   provideHttpClient,
   withFetch,
   withInterceptorsFromDi,
 } from '@angular/common/http'
 import { FakeBackendProvider } from './core/helpers/fake-backend'
+import { AuthInterceptor } from './core/interceptors/auth.interceptor'
 import { CalendarEffects } from './store/calendar/calendar.effects'
 import { KanbanEffects } from './store/kanban/kanban.effects'
 
@@ -37,6 +39,7 @@ const inMemoryScrollingFeatures: InMemoryScrollingFeature =
 export const appConfig: ApplicationConfig = {
   providers: [
     FakeBackendProvider,
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     DatePipe,
     DecimalPipe,
     provideZoneChangeDetection({
