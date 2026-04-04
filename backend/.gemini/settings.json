@@ -1,0 +1,12 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "wsl.exe",
+            "args": [
+                "/home/friday/.config/herd-lite/bin/php",
+                "/home/friday/projects/fluency-ai/fluency-ai-backend/artisan",
+                "boost:mcp"
+            ]
+        }
+    }
+}

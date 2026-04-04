@@ -1,0 +1,383 @@
+<div class="row justify-content-center">
+  @for (data of folders; track $index) {
+    <div class="col-md-6 col-lg-3">
+      <div class="card">
+        <div class="card-body">
+          <div ngbDropdown class="dropdown float-end">
+            <a
+              ngbDropdownToggle
+              class="text-muted fs-16 dropdown-toggle p-1"
+              data-bs-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <i class="fa-solid fa-ellipsis-vertical"></i>
+            </a>
+            <div ngbDropdownMenu class="dropdown-menu dropdown-menu-end">
+              <a class="dropdown-item" href="javascript:void(0);"
+                >View Detail</a
+              >
+              <a class="dropdown-item" href="javascript:void(0);">Clear All</a>
+              <a class="dropdown-item" href="javascript:void(0);">Delete</a>
+            </div>
+          </div>
+          <img
+            [src]="data.image"
+            class="me-2 align-self-center thumb-xl"
+            alt="..."
+          />
+          <h5 class="fw-semibold mt-3 fs-14">{{ data.title }}</h5>
+          <div class="d-flex justify-content-between my-2">
+            <p class="text-muted mb-0 fs-13 fw-semibold">
+              <span class="text-dark">{{ data.files }} </span>Files
+            </p>
+            <p class="text-muted mb-0 fs-13 fw-semibold">
+              <span class="text-dark">{{ data.storage }} </span>GB
+            </p>
+          </div>
+          <div class="d-flex align-items-center">
+            <div class="flex-grow-1 text-truncate">
+              <div class="d-flex align-items-center">
+                <ngb-progressbar
+                  type="secondary"
+                  class="w-100"
+                  [value]="data.progress"
+                  style="height: 5px"
+                ></ngb-progressbar>
+                <small class="flex-shrink-1 ms-1">{{ data.progress }}%</small>
+              </div>
+            </div>
+            <!--end media body-->
+          </div>
+          <!--end media-->
+        </div>
+        <!--end card-body-->
+      </div>
+      <!--end card-->
+    </div>
+    <!--end col-->
+  }
+</div>
+<!--end row-->
+<div class="row justify-content-center">
+  <div class="col-12">
+    <div class="clearfix">
+      <div ngbDropdown class="btn-group float-end ms-2">
+        <button type="button" class="btn btn-secondary me-0 overflow-hidden">
+          Upload File
+          <input
+            type="file"
+            name="file"
+            class="overflow-hidden position-absolute top-0 start-0 opacity-0"
+          />
+        </button>
+        <button
+          ngbDropdownToggle
+          type="button"
+          class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="las la-angle-down"></i>
+        </button>
+        <div ngbDropdownMenu class="dropdown-menu dropdown-menu-end">
+          <a class="dropdown-item" href="javascript:void(0);"
+            ><i class="las la-file-upload fs-16 me-1 align-text-bottom"></i>
+            Upload File</a
+          >
+          <a class="dropdown-item" href="javascript:void(0);"
+            ><i class="las la-cloud-upload-alt fs-16 me-1 align-text-bottom"></i
+            >Upload Folder</a
+          >
+        </div>
+      </div>
+      <ul ngbNav #nav="ngbNav" class="nav nav-tabs my-4" role="tablist">
+        <li ngbNavItem class="nav-item">
+          <a
+            ngbNavLink
+            class="nav-link fw-semibold py-2"
+            data-bs-toggle="tab"
+            aria-selected="true"
+            ><i class="fa-regular fa-folder-open me-1"></i> Documents
+            <span class="badge rounded text-blue bg-blue-subtle ms-1"
+              >32</span
+            ></a
+          >
+          <ng-template ngbNavContent>
+            <div class="tab-pane" id="documents" role="tabpanel">
+              <div class="table-responsive browser_users">
+                <table class="table mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th class="border-top-0">Name</th>
+                      <th class="border-top-0 text-end">Last Modified</th>
+                      <th class="border-top-0 text-end">Size</th>
+                      <th class="border-top-0 text-end">Members</th>
+                      <th class="border-top-0 text-end">Action</th>
+                    </tr>
+                    <!--end tr-->
+                  </thead>
+
+                  <tbody>
+                    @for (doc of documents; track $index) {
+                      <tr>
+                        <td>
+                          <div
+                            class="d-inline-flex justify-content-center align-items-center thumb-md bg-blue-subtle rounded mx-auto me-1"
+                          >
+                            <i
+                              class="fa-solid fa-file-pdf fs-18 align-self-center mb-0 text-blue"
+                            ></i>
+                          </div>
+                          <a href="javascript:void(0);" class="text-body">
+                            {{ doc.file_name }}</a
+                          >
+                        </td>
+                        <td class="text-end">{{ doc.date }}</td>
+                        <td class="text-end">{{ doc.size }}</td>
+                        <td class="text-end">
+                          @if (doc.avatars?.length != 0) {
+                            <div class="img-group d-flex justify-content-end">
+                              @for (
+                                img of doc.avatars;
+                                track $index;
+                                let first = $first
+                              ) {
+                                <a
+                                  class="user-avatar position-relative d-inline-block"
+                                  [ngClass]="{ 'ms-n2': !first }"
+                                  href="javascript:void(0);"
+                                >
+                                  <img
+                                    [src]="img"
+                                    alt="avatar"
+                                    class="thumb-md shadow-sm rounded-circle"
+                                  />
+                                </a>
+                              }
+                            </div>
+                          } @else {
+                            -
+                          }
+                        </td>
+                        <td class="text-end">
+                          <a href="javascript:void(0);"
+                            ><i
+                              class="las la-download text-secondary fs-18 me-0.5"
+                            ></i
+                          ></a>
+                          <a href="javascript:void(0);"
+                            ><i class="las la-pen text-secondary fs-18 me-0.5"></i
+                          ></a>
+                          <a href="javascript:void(0);"
+                            ><i
+                              class="las la-trash-alt text-secondary fs-18"
+                            ></i
+                          ></a>
+                        </td>
+                      </tr>
+                      <!--end tr-->
+                    }
+                  </tbody>
+                </table>
+                <!--end table-->
+              </div>
+              <!--end /div-->
+            </div>
+          </ng-template>
+        </li>
+        <li ngbNavItem class="nav-item">
+          <a
+            ngbNavLink
+            class="nav-link fw-semibold py-2"
+            data-bs-toggle="tab"
+            aria-selected="false"
+            ><i class="fa-regular fa-image me-1"></i> Images
+            <span class="badge rounded text-blue bg-blue-subtle ms-1"
+              >85</span
+            ></a
+          >
+          <ng-template ngbNavContent>
+            <div class="tab-pane" id="images" role="tabpanel">
+              <div class="table-responsive">
+                <table class="table mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th class="border-top-0">Name</th>
+                      <th class="border-top-0 text-end">Last Modified</th>
+                      <th class="border-top-0 text-end">Size</th>
+                      <th class="border-top-0 text-end">Members</th>
+                      <th class="border-top-0 text-end">Action</th>
+                    </tr>
+                    <!--end tr-->
+                  </thead>
+                  <tbody>
+                    @for (img of images; track $index) {
+                      <tr>
+                        <td>
+                          <div
+                            class="d-inline-flex justify-content-center align-items-center thumb-md bg-danger-subtle rounded mx-auto me-1"
+                          >
+                            <i
+                              class="fa-solid fa-image fs-18 align-self-center mb-0 text-danger"
+                            ></i>
+                          </div>
+                          <a href="javascript:void(0);" class="text-body">
+                            {{ img.file_name }}</a
+                          >
+                        </td>
+                        <td class="text-end">{{ img.date }}</td>
+                        <td class="text-end">{{ img.size }}</td>
+                        <td class="text-end">
+                          @if (img.avatars?.length != 0) {
+                            <div class="img-group d-flex justify-content-end">
+                              @for (
+                                data of img.avatars;
+                                track $index;
+                                let first = $first
+                              ) {
+                                <a
+                                  class="user-avatar position-relative d-inline-block"
+                                  [ngClass]="{ 'ms-n2': !first }"
+                                  href="javascript:void(0);"
+                                >
+                                  <img
+                                    [src]="data"
+                                    alt="avatar"
+                                    class="thumb-md shadow-sm rounded-circle"
+                                  />
+                                </a>
+                              }
+                            </div>
+                          } @else {
+                            -
+                          }
+                        </td>
+                        <td class="text-end">
+                          <a href="javascript:void(0);"
+                            ><i
+                              class="las la-download text-secondary fs-18 me-0.5"
+                            ></i
+                          ></a>
+                          <a href="javascript:void(0);"
+                            ><i class="las la-pen text-secondary fs-18 me-0.5"></i
+                          ></a>
+                          <a href="javascript:void(0);"
+                            ><i
+                              class="las la-trash-alt text-secondary fs-18"
+                            ></i
+                          ></a>
+                        </td>
+                      </tr>
+                      <!--end tr-->
+                    }
+                  </tbody>
+                </table>
+                <!--end table-->
+              </div>
+              <!--end /div-->
+            </div>
+          </ng-template>
+        </li>
+        <li ngbNavItem class="nav-item">
+          <a
+            ngbNavLink
+            class="nav-link fw-semibold py-2"
+            data-bs-toggle="tab"
+            aria-selected="false"
+            ><i class="fa-solid fa-headphones me-1"></i> Audio
+            <span class="badge rounded text-blue bg-blue-subtle ms-1"
+              >21</span
+            ></a
+          >
+          <ng-template ngbNavContent>
+            <div class="tab-pane" id="audio" role="tabpanel">
+              <div class="table-responsive">
+                <table class="table mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th class="border-top-0">Name</th>
+                      <th class="border-top-0 text-end">Last Modified</th>
+                      <th class="border-top-0 text-end">Size</th>
+                      <th class="border-top-0 text-end">Action</th>
+                    </tr>
+                    <!--end tr-->
+                  </thead>
+                  <tbody>
+                    @for (audio of audioData; track $index) {
+                      <tr>
+                        <td>
+                          <div
+                            class="d-inline-flex justify-content-center align-items-center thumb-md bg-secondary-subtle rounded mx-auto me-1"
+                          >
+                            <i
+                              class="fa-solid fa-microphone fs-18 align-self-center mb-0 text-secondary"
+                            ></i>
+                          </div>
+                          <a href="javascript:void(0);" class="text-body">
+                            {{ audio.file_name }}</a
+                          >
+                        </td>
+                        <td class="text-end">{{ audio.date }}</td>
+                        <td class="text-end">{{ audio.size }}</td>
+                        <td class="text-end">
+                          <a href="javascript:void(0);"
+                            ><i
+                              class="las la-download text-secondary fs-18 me-0.5"
+                            ></i
+                          ></a>
+                          <a href="javascript:void(0);"
+                            ><i class="las la-pen text-secondary fs-18 me-0.5"></i
+                          ></a>
+                          <a href="javascript:void(0);"
+                            ><i
+                              class="las la-trash-alt text-secondary fs-18"
+                            ></i
+                          ></a>
+                        </td>
+                      </tr>
+                      <!--end tr-->
+                    }
+                  </tbody>
+                </table>
+                <!--end table-->
+              </div>
+              <!--end /div-->
+            </div>
+          </ng-template>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="row align-items-center">
+          <div class="col">
+            <h4 class="card-title">Files</h4>
+          </div>
+          <!--end col-->
+          <div class="col-auto">
+            <div class="dropdown">
+              <a
+                href="javascript:void(0);"
+                class="text-body text-decoration-underline"
+              >
+                View All
+              </a>
+            </div>
+          </div>
+          <!--end col-->
+        </div>
+        <!--end row-->
+      </div>
+      <!--end card-header-->
+      <div class="card-body pt-0">
+        <div [ngbNavOutlet]="nav" class="tab-content"></div>
+      </div>
+      <!--end card-body-->
+    </div>
+    <!--end card-->
+  </div>
+  <!--end col-->
+</div>
+<!--end row-->
