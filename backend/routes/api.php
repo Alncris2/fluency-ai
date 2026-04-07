@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\QuizController;
+use App\Http\Controllers\Api\RegisterController;
 use App\Http\Controllers\Api\StudentController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Route;
@@ -11,6 +12,8 @@ Route::get('/health', fn (): JsonResponse => response()->json([
     'service' => 'fluency-ai-backend',
     'timestamp' => now()->toISOString(),
 ]));
+
+Route::post('/register', [RegisterController::class, 'store']);
 
 Route::prefix('v1')->group(function (): void {
     Route::prefix('students/{student}')->group(function (): void {

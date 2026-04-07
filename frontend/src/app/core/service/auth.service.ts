@@ -5,6 +5,13 @@ import { map } from 'rxjs/operators'
 import { CookieService } from 'ngx-cookie-service'
 import { User } from '../helpers/fake-backend'
 
+export interface RegisterPayload {
+  name: string
+  email: string
+  password: string
+  password_confirmation: string
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
   user: User | null = null
@@ -22,6 +29,19 @@ export class AuthenticationService {
           this.user = user
           // store user details and jwt in session
           this.saveSession(user.token)
+        }
+        return user
+      })
+    )
+  }
+
+  register(payload: RegisterPayload) {
+    return this.http.post<User>(`/api/register`, payload).pipe(
+      map((user) => {
+        if (user && user.token) {
+          this.user = user
+          this.saveSession(user.token)
+          localStorage.setItem('fluency_token', user.token)
         }
         return user
       })

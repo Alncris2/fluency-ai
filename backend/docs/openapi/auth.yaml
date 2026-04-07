@@ -1,0 +1,87 @@
+openapi: "3.1.0"
+info:
+  title: Fluency AI API — Auth
+  version: "1.0.0"
+  description: Endpoints de autenticação do Fluency AI
+
+paths:
+  /api/register:
+    post:
+      summary: Registra novo usuário e retorna token Sanctum
+      operationId: register
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+                - password_confirmation
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 255
+                  example: "João Silva"
+                email:
+                  type: string
+                  format: email
+                  maxLength: 255
+                  example: "joao@email.com"
+                password:
+                  type: string
+                  minLength: 8
+                  example: "senhaSegura123"
+                password_confirmation:
+                  type: string
+                  minLength: 8
+                  example: "senhaSegura123"
+      responses:
+        "201":
+          description: Usuário criado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      email:
+                        type: string
+                        format: email
+                  token:
+                    type: string
+                    description: Token Sanctum para autenticação
+        "422":
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "The email has already been taken."
+                  errors:
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: string
+
+components:
+  securitySchemes:
+    sanctum:
+      type: http
+      scheme: bearer
+      bearerFormat: "Sanctum Token"
