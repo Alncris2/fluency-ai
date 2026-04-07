@@ -1,0 +1,123 @@
+openapi: "3.1.0"
+info:
+  title: Fluency AI API — Student
+  version: "1.0.0"
+
+paths:
+  /api/v1/students/{student}/preferences:
+    patch:
+      summary: Salva preferências do aluno coletadas no wizard de onboarding
+      security:
+        - sanctum: []
+      parameters:
+        - name: student
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID do Student
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OnboardingPreferences"
+            example:
+              preferred_name: "Ana"
+              goal: "trabalho"
+              english_level: "basico"
+              interests: ["series", "tecnologia"]
+              availability:
+                days: ["seg", "qua", "sex"]
+                time_of_day: ["manha"]
+      responses:
+        "200":
+          description: Preferências salvas com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StudentResource"
+        "401":
+          description: Não autenticado
+        "404":
+          description: Student não encontrado
+        "422":
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+
+components:
+  securitySchemes:
+    sanctum:
+      type: http
+      scheme: bearer
+
+  schemas:
+    OnboardingPreferences:
+      type: object
+      required: [preferred_name, goal, english_level, interests, availability]
+      properties:
+        preferred_name:
+          type: string
+          example: "Ana"
+        goal:
+          type: string
+          enum: [viagem, trabalho, hobby]
+        english_level:
+          type: string
+          enum: [nunca_estudei, basico, intermediario, avancado]
+        interests:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            enum: [series, musica, esportes, tecnologia, viagem]
+        availability:
+          type: object
+          required: [days, time_of_day]
+          properties:
+            days:
+              type: array
+              minItems: 1
+              items:
+                type: string
+                enum: [seg, ter, qua, qui, sex, sab, dom]
+            time_of_day:
+              type: array
+              minItems: 1
+              items:
+                type: string
+                enum: [manha, tarde, noite]
+
+    StudentResource:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        level:
+          type: string
+        preferences:
+          $ref: "#/components/schemas/OnboardingPreferences"
+        subscription_plan:
+          type: string
+
+    ValidationError:
+      type: object
+      properties:
+        message:
+          type: string
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
