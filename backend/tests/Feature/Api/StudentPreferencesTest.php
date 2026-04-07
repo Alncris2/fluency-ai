@@ -3,7 +3,9 @@
 namespace Tests\Feature\Api;
 
 use App\Models\Student;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class StudentPreferencesTest extends TestCase
@@ -21,9 +23,17 @@ class StudentPreferencesTest extends TestCase
         ],
     ];
 
+    private function authenticatedStudent(): Student
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+
+        return Student::factory()->create();
+    }
+
     public function test_patch_com_payload_valido_retorna_200_e_persiste_preferences(): void
     {
-        $student = Student::factory()->create();
+        $student = $this->authenticatedStudent();
 
         $response = $this->patchJson("/api/v1/students/{$student->id}/preferences", $this->validPayload);
 
@@ -35,7 +45,7 @@ class StudentPreferencesTest extends TestCase
 
     public function test_patch_sem_goal_retorna_422(): void
     {
-        $student = Student::factory()->create();
+        $student = $this->authenticatedStudent();
         $payload = $this->validPayload;
         unset($payload['goal']);
 
@@ -46,7 +56,7 @@ class StudentPreferencesTest extends TestCase
 
     public function test_patch_sem_interests_retorna_422(): void
     {
-        $student = Student::factory()->create();
+        $student = $this->authenticatedStudent();
         $payload = $this->validPayload;
         unset($payload['interests']);
 
@@ -57,7 +67,7 @@ class StudentPreferencesTest extends TestCase
 
     public function test_patch_com_goal_invalido_retorna_422(): void
     {
-        $student = Student::factory()->create();
+        $student = $this->authenticatedStudent();
         $payload = array_merge($this->validPayload, ['goal' => 'invalido']);
 
         $this->patchJson("/api/v1/students/{$student->id}/preferences", $payload)
@@ -67,7 +77,7 @@ class StudentPreferencesTest extends TestCase
 
     public function test_patch_com_availability_days_vazio_retorna_422(): void
     {
-        $student = Student::factory()->create();
+        $student = $this->authenticatedStudent();
         $payload = array_merge($this->validPayload, [
             'availability' => [
                 'days' => [],
