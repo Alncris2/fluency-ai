@@ -1,27 +1,58 @@
-# Rizz
+# Fluency AI — Frontend
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.0.0.
+Angular 19 frontend da plataforma Fluency AI — professor de IA para ensino de inglês.
 
-## Development server
+## Stack
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- **Angular** 19.2.x (standalone components, lazy loading)
+- **NgRx** 19.2.x (state management)
+- **ng-bootstrap** 18.x + Bootstrap 5.3
+- **Template base**: Rizz (adaptado para Fluency)
 
-## Code scaffolding
+## Desenvolvimento
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+```bash
+ng serve
+# Acesse http://localhost:4200
+```
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+```bash
+ng build --configuration production
+# Artefatos em dist/
+```
 
-## Running unit tests
+## Testes
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+```bash
+ng test --watch=false
+```
 
-## Running end-to-end tests
+## Arquitetura
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+```
+src/app/
+├── views/          # Features por domínio (lazy loading)
+│   └── auth/       # Autenticação (login, register)
+├── shared/         # Componentes reutilizáveis
+├── core/           # Guards, interceptors, serviços globais
+├── store/          # NgRx slices (authentication, layout)
+└── layouts/        # Shells de layout (vertical/topbar)
+```
 
-## Further help
+## Features implementadas
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+| Feature | Rota | Sprint | Issue |
+|---------|------|--------|-------|
+| Tela de login | `/auth/log-in` | sprint_1_infra | #9 |
+
+## Documentação
+
+- `docs/adr/` — Architecture Decision Records
+- `docs/openapi/` — Especificação OpenAPI dos endpoints
+
+## Cores Fluency
+
+- Primary: `#6C63FF`
+- Secondary: `#1EC8A0`

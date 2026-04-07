@@ -23,3 +23,8 @@ export const getError = createSelector(
   getUserState,
   (state: AuthenticationState) => state.error
 )
+
+export const getIsLoading = createSelector(
+  getUserState,
+  (state: AuthenticationState) => state.isLoading
+)
