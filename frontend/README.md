@@ -46,6 +46,7 @@ src/app/
 | Feature | Rota | Sprint | Issue |
 |---------|------|--------|-------|
 | Tela de login | `/auth/log-in` | sprint_1_infra | #9 |
+| Wizard de onboarding (4 passos) | `/auth/onboarding` | sprint_1_infra | #11 |
 
 ## Documentação
 

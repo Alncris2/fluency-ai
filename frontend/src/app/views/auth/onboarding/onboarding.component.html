@@ -1,0 +1,263 @@
+<div class="container-xxl">
+  <div class="row min-vh-100 d-flex justify-content-center">
+    <div class="col-12 align-self-center">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-lg-6 mx-auto">
+            <div class="card shadow">
+
+              <!-- Header -->
+              <div class="card-body p-0 auth-header-box rounded-top" style="background-color: #6C63FF;">
+                <div class="text-center p-3">
+                  <a routerLink="/" class="logo logo-admin">
+                    <img
+                      src="assets/images/logo-sm.png"
+                      height="50"
+                      alt="Fluency AI"
+                      class="auth-logo"
+                    />
+                  </a>
+                  <h4 class="mt-3 mb-1 fw-semibold text-white fs-18">
+                    Vamos configurar seu perfil
+                  </h4>
+                  <p class="text-white-50 fw-medium mb-0">
+                    Passo {{ currentStep }} de {{ totalSteps }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="card-body pt-3">
+
+                <!-- Progress indicator -->
+                <div class="d-flex justify-content-center gap-2 mb-4 mt-2">
+                  @for (step of [1, 2, 3, 4]; track step) {
+                    <span
+                      class="step-indicator"
+                      [style.width.px]="step === currentStep ? 32 : 12"
+                      [style.height.px]="12"
+                      [style.border-radius.px]="6"
+                      [style.background-color]="step <= currentStep ? '#6C63FF' : '#dee2e6'"
+                      style="display: inline-block; transition: all 0.3s ease;"
+                    ></span>
+                  }
+                </div>
+
+                <!-- Step 1: Nome + Objetivo -->
+                @if (currentStep === 1) {
+                  <div [formGroup]="step1Form">
+                    <h5 class="fw-semibold mb-3">Como podemos te chamar?</h5>
+
+                    <div class="form-group mb-3">
+                      <label class="form-label" for="preferred_name">Nome preferido <span class="text-danger">*</span></label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="preferred_name"
+                        formControlName="preferred_name"
+                        placeholder="Ex: João, Mari, Rafa..."
+                        [class.is-invalid]="step1Form.get('preferred_name')?.touched && step1Form.get('preferred_name')?.invalid"
+                      />
+                      @if (step1Form.get('preferred_name')?.touched && step1Form.get('preferred_name')?.invalid) {
+                        <div class="invalid-feedback">Informe um nome com ao menos 2 caracteres.</div>
+                      }
+                    </div>
+
+                    <div class="form-group mb-3">
+                      <label class="form-label">Qual é o seu objetivo? <span class="text-danger">*</span></label>
+                      <div class="d-flex gap-2 flex-wrap">
+                        @for (option of goalOptions; track option.value) {
+                          <button
+                            type="button"
+                            class="btn btn-outline-secondary flex-fill"
+                            [style.border-color]="step1Form.get('goal')?.value === option.value ? '#6C63FF' : ''"
+                            [style.color]="step1Form.get('goal')?.value === option.value ? '#6C63FF' : ''"
+                            [style.background-color]="step1Form.get('goal')?.value === option.value ? 'rgba(108,99,255,0.1)' : ''"
+                            (click)="step1Form.get('goal')?.setValue(option.value)"
+                          >
+                            {{ option.label }}
+                          </button>
+                        }
+                      </div>
+                      @if (step1Form.get('goal')?.touched && step1Form.get('goal')?.invalid) {
+                        <div class="text-danger small mt-1">Selecione um objetivo.</div>
+                      }
+                    </div>
+                  </div>
+                }
+
+                <!-- Step 2: Nível de inglês -->
+                @if (currentStep === 2) {
+                  <div [formGroup]="step2Form">
+                    <h5 class="fw-semibold mb-3">Qual é o seu nível de inglês?</h5>
+
+                    <div class="d-flex flex-column gap-2">
+                      @for (option of englishLevelOptions; track option.value) {
+                        <button
+                          type="button"
+                          class="btn text-start p-3"
+                          [class.btn-outline-secondary]="step2Form.get('english_level')?.value !== option.value"
+                          [style.border-color]="step2Form.get('english_level')?.value === option.value ? '#6C63FF' : ''"
+                          [style.background-color]="step2Form.get('english_level')?.value === option.value ? 'rgba(108,99,255,0.1)' : ''"
+                          (click)="step2Form.get('english_level')?.setValue(option.value)"
+                        >
+                          <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                              <div class="fw-semibold" [style.color]="step2Form.get('english_level')?.value === option.value ? '#6C63FF' : ''">{{ option.label }}</div>
+                              <small class="text-muted">{{ option.desc }}</small>
+                            </div>
+                            @if (step2Form.get('english_level')?.value === option.value) {
+                              <i class="mdi mdi-check-circle fs-5" style="color: #6C63FF;"></i>
+                            }
+                          </div>
+                        </button>
+                      }
+                    </div>
+                  </div>
+                }
+
+                <!-- Step 3: Interesses -->
+                @if (currentStep === 3) {
+                  <div [formGroup]="step3Form">
+                    <h5 class="fw-semibold mb-1">Quais são seus interesses?</h5>
+                    <p class="text-muted small mb-3">Selecione ao menos 1 tema que você gosta.</p>
+
+                    <div class="d-flex flex-wrap gap-2">
+                      @for (interest of interests; track interest) {
+                        <button
+                          type="button"
+                          class="btn rounded-pill px-4 py-2"
+                          [style.border]="isInterestSelected(interest) ? '2px solid #6C63FF' : '2px solid #dee2e6'"
+                          [style.background-color]="isInterestSelected(interest) ? 'rgba(108,99,255,0.12)' : '#fff'"
+                          [style.color]="isInterestSelected(interest) ? '#6C63FF' : '#6c757d'"
+                          [style.font-weight]="isInterestSelected(interest) ? '600' : '400'"
+                          (click)="toggleInterest(interest)"
+                        >
+                          {{ interestLabels[interest] }}
+                          @if (isInterestSelected(interest)) {
+                            <i class="mdi mdi-check ms-1"></i>
+                          }
+                        </button>
+                      }
+                    </div>
+
+                    @if (step3Form.get('interests')?.value?.length === 0) {
+                      <div class="text-danger small mt-2">Selecione ao menos 1 interesse.</div>
+                    }
+                  </div>
+                }
+
+                <!-- Step 4: Disponibilidade -->
+                @if (currentStep === 4) {
+                  <div [formGroup]="step4Form">
+                    <h5 class="fw-semibold mb-1">Qual é a sua disponibilidade?</h5>
+                    <p class="text-muted small mb-3">Selecione ao menos 1 dia e 1 horário.</p>
+
+                    <!-- Dias da semana -->
+                    <div class="mb-4">
+                      <label class="form-label fw-semibold">Dias da semana</label>
+                      <div class="d-flex flex-wrap gap-2">
+                        @for (day of days; track day) {
+                          <button
+                            type="button"
+                            class="btn rounded-circle d-flex align-items-center justify-content-center fw-semibold"
+                            [style.width.px]="48"
+                            [style.height.px]="48"
+                            [style.border]="isDaySelected(day) ? '2px solid #6C63FF' : '2px solid #dee2e6'"
+                            [style.background-color]="isDaySelected(day) ? '#6C63FF' : '#fff'"
+                            [style.color]="isDaySelected(day) ? '#fff' : '#6c757d'"
+                            (click)="toggleDay(day)"
+                          >
+                            {{ dayLabels[day] }}
+                          </button>
+                        }
+                      </div>
+                    </div>
+
+                    <!-- Horário -->
+                    <div class="mb-3">
+                      <label class="form-label fw-semibold">Horário preferido</label>
+                      <div class="d-flex gap-2 flex-wrap">
+                        @for (time of timeSlots; track time) {
+                          <button
+                            type="button"
+                            class="btn flex-fill py-3"
+                            [style.border]="isTimeSelected(time) ? '2px solid #1EC8A0' : '2px solid #dee2e6'"
+                            [style.background-color]="isTimeSelected(time) ? 'rgba(30,200,160,0.12)' : '#fff'"
+                            [style.color]="isTimeSelected(time) ? '#1EC8A0' : '#6c757d'"
+                            [style.font-weight]="isTimeSelected(time) ? '600' : '400'"
+                            (click)="toggleTime(time)"
+                          >
+                            {{ timeLabels[time] }}
+                          </button>
+                        }
+                      </div>
+                    </div>
+
+                    @if (!canAdvance()) {
+                      <div class="text-danger small mt-1">Selecione ao menos 1 dia e 1 horário.</div>
+                    }
+
+                    <!-- Error banner -->
+                    @if (errorMessage) {
+                      <div class="alert alert-danger mt-3" role="alert">
+                        <i class="mdi mdi-alert-circle me-2"></i>
+                        {{ errorMessage }}
+                      </div>
+                    }
+                  </div>
+                }
+
+                <!-- Navigation buttons -->
+                <div class="d-flex gap-2 mt-4">
+                  @if (currentStep > 1) {
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      (click)="prevStep()"
+                      [disabled]="isLoading"
+                    >
+                      <i class="mdi mdi-arrow-left me-1"></i>
+                      Voltar
+                    </button>
+                  }
+
+                  <div class="flex-fill"></div>
+
+                  @if (currentStep < totalSteps) {
+                    <button
+                      type="button"
+                      class="btn"
+                      style="background-color: #6C63FF; color: #fff; border-color: #6C63FF;"
+                      [disabled]="!canAdvance()"
+                      (click)="nextStep()"
+                    >
+                      Próximo
+                      <i class="mdi mdi-arrow-right ms-1"></i>
+                    </button>
+                  } @else {
+                    <button
+                      type="button"
+                      class="btn"
+                      style="background-color: #1EC8A0; color: #fff; border-color: #1EC8A0;"
+                      [disabled]="!canAdvance() || isLoading"
+                      (click)="submit()"
+                    >
+                      @if (isLoading) {
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        Salvando...
+                      } @else {
+                        Concluir
+                        <i class="mdi mdi-check ms-1"></i>
+                      }
+                    </button>
+                  }
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

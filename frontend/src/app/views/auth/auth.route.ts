@@ -3,6 +3,7 @@ import { LockScreenComponent } from './lock-screen/lock-screen.component'
 import { LoginComponent } from './login/login.component'
 import { RegisterComponent } from './register/register.component'
 import { RecoverPwComponent } from './recover-pw/recover-pw.component'
+import { OnboardingComponent } from './onboarding/onboarding.component'
 
 export const AUTH_ROUTES: Route[] = [
   {
@@ -24,5 +25,10 @@ export const AUTH_ROUTES: Route[] = [
     path: 'lock-screen',
     component: LockScreenComponent,
     data: { title: 'Lock Screen' },
+  },
+  {
+    path: 'onboarding',
+    component: OnboardingComponent,
+    data: { title: 'Onboarding' },
   },
 ]
