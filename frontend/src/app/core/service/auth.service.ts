@@ -30,10 +30,8 @@ export class AuthenticationService {
   login(email: string, password: string) {
     return this.http.post<User>(`/api/login`, { email, password }).pipe(
       map((user) => {
-        // login successful if there's a jwt token in the response
         if (user && user.token) {
           this.user = user
-          // store user details and jwt in session
           this.saveSession(user.token)
         }
         return user
@@ -47,7 +45,6 @@ export class AuthenticationService {
         if (user && user.token) {
           this.user = user
           this.saveSession(user.token)
-          localStorage.setItem('fluency_token', user.token)
         }
         return user
       })
@@ -55,7 +52,6 @@ export class AuthenticationService {
   }
 
   logout(): void {
-    // remove user from cookie to log user out
     this.removeSession()
     this.user = null
   }
@@ -66,9 +62,11 @@ export class AuthenticationService {
 
   saveSession(token: string): void {
     this.cookieService.set(this.authSessionKey, token)
+    localStorage.setItem('fluency_token', token)
   }
 
   removeSession(): void {
     this.cookieService.delete(this.authSessionKey)
+    localStorage.removeItem('fluency_token')
   }
 }

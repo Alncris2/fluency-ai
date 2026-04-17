@@ -1,4 +1,3 @@
-// title.service.ts
 import { Injectable } from '@angular/core'
 import { Title } from '@angular/platform-browser'
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router'
@@ -30,8 +29,7 @@ export class TitleService {
 
     if (route.snapshot.data['title']) {
       this.titleService.setTitle(
-        route.snapshot.data['title'] +
-          ' | Rizz - Responsive Angular Admin & Dashboard Template'
+        route.snapshot.data['title'] + ' | Fluency AI'
       )
     }
   }
