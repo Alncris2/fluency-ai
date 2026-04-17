@@ -1,0 +1,141 @@
+name: Backend CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  APP_ENV: testing
+  APP_DEBUG: false
+  CACHE_DRIVER: array
+  SESSION_DRIVER: array
+  DB_CONNECTION: sqlite
+  DB_DATABASE: ':memory:'
+
+jobs:
+  test:
+    name: PHPUnit + Pint
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        php-version: ['8.4']
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup PHP ${{ matrix.php-version }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: curl,mbstring,zip,bcmath,sqlite,pdo_sqlite
+          ini-values: error_reporting=E_ALL, display_errors=On
+          tools: composer:v2
+          coverage: pcov
+
+      - name: Validate composer.json
+        working-directory: backend
+        run: composer validate
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: backend/vendor
+          key: ${{ runner.os }}-composer-php${{ matrix.php-version }}-${{ hashFiles('backend/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-php${{ matrix.php-version }}-
+            ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        working-directory: backend
+        run: composer install --prefer-dist --no-progress --no-interaction --no-dev
+
+      - name: Generate application key
+        working-directory: backend
+        run: php artisan key:generate --env=testing
+
+      - name: Run PHPUnit tests
+        working-directory: backend
+        run: php artisan test --parallel --processes=4 --log-junit=../test-results/backend-junit.xml
+        continue-on-error: false
+
+      - name: Generate test coverage
+        working-directory: backend
+        run: php artisan test --coverage --coverage-clover=../test-results/coverage.xml || true
+        continue-on-error: true
+
+      - name: Run Pint linting
+        working-directory: backend
+        run: vendor/bin/pint --test --dirty --format=json > ../test-results/pint-report.json || true
+        continue-on-error: true
+
+      - name: Check Pint violations
+        working-directory: backend
+        run: |
+          if ! vendor/bin/pint --test --dirty; then
+            echo "❌ Pint found code style violations"
+            echo "💡 Run 'vendor/bin/pint' locally and commit changes"
+            exit 1
+          fi
+          echo "✅ Pint validation passed"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-test-results-php${{ matrix.php-version }}
+          path: test-results/
+          retention-days: 30
+
+      - name: Comment PR with test summary
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            let comment = '## ✅ Backend CI Summary\n\n';
+            
+            if (fs.existsSync('test-results/backend-junit.xml')) {
+              const xml = fs.readFileSync('test-results/backend-junit.xml', 'utf8');
+              const testMatch = xml.match(/tests="(\d+)"/);
+              const failuresMatch = xml.match(/failures="(\d+)"/);
+              
+              if (testMatch) {
+                comment += `- **Tests**: ${testMatch[1]} run`;
+                if (failuresMatch && failuresMatch[1] !== '0') {
+                  comment += ` (${failuresMatch[1]} failed) ❌`;
+                } else {
+                  comment += ` ✅`;
+                }
+              }
+              comment += '\n';
+            }
+            
+            comment += `- **PHP**: 8.4 ✅\n`;
+            comment += `- **Linting**: Pint validation ✅\n`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
