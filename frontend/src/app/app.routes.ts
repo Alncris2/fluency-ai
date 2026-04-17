@@ -1,10 +1,9 @@
-import { RedirectCommand, Router, Routes, UrlTree } from '@angular/router'
+import { Routes } from '@angular/router'
 import { LayoutComponent } from './layouts/layout/layout.component'
 import { Error404Component } from './views/auth/error404/error404.component'
 import { Error500Component } from './views/auth/error500/error500.component'
 import { MaintenanceComponent } from './views/auth/maintenance/maintenance.component'
-import { inject } from '@angular/core'
-import { AuthenticationService } from './core/service/auth.service'
+import { authGuard } from './core/guards/auth.guard'
 
 export const routes: Routes = [
   {
@@ -15,15 +14,7 @@ export const routes: Routes = [
   {
     path: '',
     component: LayoutComponent,
-    canActivate: [
-      () => {
-        const currentUser = inject(AuthenticationService).session
-        const router: Router = inject(Router)
-        if (currentUser) return true
-        const urlTree: UrlTree = router.parseUrl('/auth/log-in')
-        return new RedirectCommand(urlTree, { skipLocationChange: true })
-      },
-    ],
+    canActivate: [authGuard],
     loadChildren: () =>
       import('./views/views.route').then((mod) => mod.VIEW_ROUTES),
   },
