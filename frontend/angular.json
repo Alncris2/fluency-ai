@@ -34,43 +34,9 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": [
-              "node_modules/tui-chart/dist/tui-chart-all.min.js",
-              "node_modules/tui-chart/dist/maps/usa.js",
-              "node_modules/tobii/dist/js/tobii.min.js",
-              "node_modules/mobius1-selectr/dist/selectr.min.js",
-              "node_modules/listree/dist/listree.umd.min.js",
-              "node_modules/imask/dist/imask.min.js",
-              "node_modules/jsvectormap/dist/js/jsvectormap.min.js"
-            ],
+            "scripts": [],
             "allowedCommonJsDependencies": [
-              "quill-delta",
-              "mobius1-selectr",
-              "cropperjs",
-              "leaflet",
-              "jsvectormap",
-              "jsvectormap/dist/maps/world.js",
-              "prismjs",
-              "huebee",
-              "apexcharts",
-              "raphael",
-              "justgage",
-              "tui-chart",
-              "tui-chart/dist/maps/usa.js",
-              "listree",
-              "tobii",
-              "lodash",
-              "dragula",
-              "sweetalert2",
-              "can-use-dom",
-              "namespace-emitter",
-              "lodash/throttle.js",
-              "@transloadit/prettier-bytes",
-              "mime-match",
-              "lodash/debounce.js",
-              "classnames",
-              "url-parse",
-              "is-shallow-equal"
+              "apexcharts"
             ]
           },
           "configurations": {

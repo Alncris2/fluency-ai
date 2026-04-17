@@ -1,5 +1,5 @@
 import { Component } from '@angular/core'
-import { BrowserData } from '../../data'
+import { ActivityData } from '../../data'
 
 @Component({
   selector: 'analytics-browser',
@@ -9,5 +9,5 @@ import { BrowserData } from '../../data'
   styles: ``,
 })
 export class BrowserComponent {
-  BrowserData = BrowserData
+  ActivityData = ActivityData
 }
