@@ -3,7 +3,13 @@ import { HttpClient } from '@angular/common/http'
 import { map } from 'rxjs/operators'
 
 import { CookieService } from 'ngx-cookie-service'
-import { User } from '../helpers/fake-backend'
+
+export interface User {
+  id?: number
+  name?: string
+  email?: string
+  token?: string
+}
 
 export interface RegisterPayload {
   name: string

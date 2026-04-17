@@ -22,7 +22,6 @@ import {
   withFetch,
   withInterceptorsFromDi,
 } from '@angular/common/http'
-import { FakeBackendProvider } from './core/helpers/fake-backend'
 import { AuthInterceptor } from './core/interceptors/auth.interceptor'
 
 // scroll
@@ -36,7 +35,6 @@ const inMemoryScrollingFeatures: InMemoryScrollingFeature =
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    FakeBackendProvider,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     DatePipe,
     DecimalPipe,
