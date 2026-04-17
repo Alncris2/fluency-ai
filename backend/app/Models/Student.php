@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Student extends Model
 {
@@ -23,4 +24,9 @@ class Student extends Model
     protected $casts = [
         'preferences' => 'array',
     ];
+
+    public function learningPlan(): HasOne
+    {
+        return $this->hasOne(LessonPlan::class);
+    }
 }
