@@ -1,9 +1,12 @@
 {
-  "bracketSpacing": true,
-  "semi": false,
+  "printWidth": 100,
   "singleQuote": true,
-  "trailingComma": "es5",
-  "useTabs": false,
-  "tabWidth": 2,
-  "arrowParens": "always"
+  "overrides": [
+    {
+      "files": "*.html",
+      "options": {
+        "parser": "angular"
+      }
+    }
+  ]
 }

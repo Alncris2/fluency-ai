@@ -20,7 +20,7 @@ class LoginControllerTest extends TestCase
     {
         User::factory()->create($this->credentials);
 
-        $response = $this->postJson('/api/login', $this->credentials);
+        $response = $this->postJson('/api/auth/login', $this->credentials);
 
         $response->assertOk()
             ->assertJsonStructure([
@@ -34,7 +34,7 @@ class LoginControllerTest extends TestCase
     {
         User::factory()->create($this->credentials);
 
-        $response = $this->postJson('/api/login', $this->credentials);
+        $response = $this->postJson('/api/auth/login', $this->credentials);
 
         $response->assertOk()
             ->assertJson(['onboarding_completed' => false]);
@@ -48,7 +48,7 @@ class LoginControllerTest extends TestCase
             'preferences' => null,
         ]);
 
-        $response = $this->postJson('/api/login', $this->credentials);
+        $response = $this->postJson('/api/auth/login', $this->credentials);
 
         $response->assertOk()
             ->assertJson(['onboarding_completed' => false]);
@@ -62,7 +62,7 @@ class LoginControllerTest extends TestCase
             'preferences' => ['goal' => 'travel', 'interests' => ['music']],
         ]);
 
-        $response = $this->postJson('/api/login', $this->credentials);
+        $response = $this->postJson('/api/auth/login', $this->credentials);
 
         $response->assertOk()
             ->assertJson(['onboarding_completed' => true]);
@@ -72,7 +72,7 @@ class LoginControllerTest extends TestCase
     {
         User::factory()->create(['email' => $this->credentials['email']]);
 
-        $response = $this->postJson('/api/login', [
+        $response = $this->postJson('/api/auth/login', [
             'email' => $this->credentials['email'],
             'password' => 'wrong-password',
         ]);
@@ -83,14 +83,14 @@ class LoginControllerTest extends TestCase
 
     public function test_nonexistent_user_returns_401(): void
     {
-        $response = $this->postJson('/api/login', $this->credentials);
+        $response = $this->postJson('/api/auth/login', $this->credentials);
 
         $response->assertStatus(401);
     }
 
     public function test_missing_fields_returns_422(): void
     {
-        $response = $this->postJson('/api/login', []);
+        $response = $this->postJson('/api/auth/login', []);
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['email', 'password']);
@@ -98,7 +98,7 @@ class LoginControllerTest extends TestCase
 
     public function test_invalid_email_format_returns_422(): void
     {
-        $response = $this->postJson('/api/login', [
+        $response = $this->postJson('/api/auth/login', [
             'email' => 'not-an-email',
             'password' => 'password123',
         ]);

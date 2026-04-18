@@ -1,59 +1,59 @@
-# Fluency AI — Frontend
+# FluencyFrontend
 
-Angular 19 frontend da plataforma Fluency AI — professor de IA para ensino de inglês.
+This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.6.
 
-## Stack
+## Development server
 
-- **Angular** 19.2.x (standalone components, lazy loading)
-- **NgRx** 19.2.x (state management)
-- **ng-bootstrap** 18.x + Bootstrap 5.3
-- **Template base**: Rizz (adaptado para Fluency)
-
-## Desenvolvimento
+To start a local development server, run:
 
 ```bash
 ng serve
-# Acesse http://localhost:4200
 ```
 
-## Build
+Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+
+## Code scaffolding
+
+Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
 
 ```bash
-ng build --configuration production
-# Artefatos em dist/
+ng generate component component-name
 ```
 
-## Testes
+For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
 
 ```bash
-ng test --watch=false
+ng generate --help
 ```
 
-## Arquitetura
+## Building
 
-```
-src/app/
-├── views/          # Features por domínio (lazy loading)
-│   └── auth/       # Autenticação (login, register)
-├── shared/         # Componentes reutilizáveis
-├── core/           # Guards, interceptors, serviços globais
-├── store/          # NgRx slices (authentication, layout)
-└── layouts/        # Shells de layout (vertical/topbar)
+To build the project run:
+
+```bash
+ng build
 ```
 
-## Features implementadas
+This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
 
-| Feature | Rota | Sprint | Issue |
-|---------|------|--------|-------|
-| Tela de login | `/auth/log-in` | sprint_1_infra | #9 |
-| Wizard de onboarding (4 passos) | `/auth/onboarding` | sprint_1_infra | #11 |
+## Running unit tests
 
-## Documentação
+To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
 
-- `docs/adr/` — Architecture Decision Records
-- `docs/openapi/` — Especificação OpenAPI dos endpoints
+```bash
+ng test
+```
 
-## Cores Fluency
+## Running end-to-end tests
 
-- Primary: `#6C63FF`
-- Secondary: `#1EC8A0`
+For end-to-end (e2e) testing, run:
+
+```bash
+ng e2e
+```
+
+Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+
+## Additional Resources
+
+For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.

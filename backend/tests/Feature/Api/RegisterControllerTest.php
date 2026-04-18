@@ -19,7 +19,7 @@ class RegisterControllerTest extends TestCase
 
     public function test_successful_registration_returns_201_with_token(): void
     {
-        $response = $this->postJson('/api/register', $this->validPayload);
+        $response = $this->postJson('/api/auth/register', $this->validPayload);
 
         $response->assertStatus(201)
             ->assertJsonStructure([
@@ -37,7 +37,7 @@ class RegisterControllerTest extends TestCase
     {
         User::factory()->create(['email' => 'john@example.com']);
 
-        $response = $this->postJson('/api/register', $this->validPayload);
+        $response = $this->postJson('/api/auth/register', $this->validPayload);
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['email']);
@@ -45,7 +45,7 @@ class RegisterControllerTest extends TestCase
 
     public function test_missing_required_fields_returns_422(): void
     {
-        $response = $this->postJson('/api/register', []);
+        $response = $this->postJson('/api/auth/register', []);
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['name', 'email', 'password']);
@@ -58,7 +58,7 @@ class RegisterControllerTest extends TestCase
             'password_confirmation' => 'short',
         ]);
 
-        $response = $this->postJson('/api/register', $payload);
+        $response = $this->postJson('/api/auth/register', $payload);
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['password']);
@@ -70,7 +70,7 @@ class RegisterControllerTest extends TestCase
             'password_confirmation' => 'different_password',
         ]);
 
-        $response = $this->postJson('/api/register', $payload);
+        $response = $this->postJson('/api/auth/register', $payload);
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['password']);

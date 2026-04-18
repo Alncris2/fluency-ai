@@ -16,7 +16,7 @@ class LogoutControllerTest extends TestCase
         $user = User::factory()->create();
         Sanctum::actingAs($user);
 
-        $response = $this->postJson('/api/logout');
+        $response = $this->postJson('/api/auth/logout');
 
         $response->assertOk()
             ->assertJson(['message' => 'Logged out successfully.']);
@@ -26,7 +26,7 @@ class LogoutControllerTest extends TestCase
 
     public function test_unauthenticated_request_returns_401(): void
     {
-        $response = $this->postJson('/api/logout');
+        $response = $this->postJson('/api/auth/logout');
 
         $response->assertStatus(401);
     }

@@ -1,52 +1,17 @@
-import {
-  ApplicationConfig,
-  isDevMode,
-  provideZoneChangeDetection,
-} from '@angular/core'
-import {
-  provideRouter,
-  withInMemoryScrolling,
-  type InMemoryScrollingFeature,
-  type InMemoryScrollingOptions,
-} from '@angular/router'
-  import { provideStore } from '@ngrx/store'
-import { provideStoreDevtools } from '@ngrx/store-devtools'
-import { routes } from './app.routes'
-import { provideEffects } from '@ngrx/effects'
-import { rootReducer } from './store'
-import { DatePipe, DecimalPipe } from '@angular/common'
-import { AuthenticationEffects } from './store/authentication/authentication.effects'
-import {
-  HTTP_INTERCEPTORS,
-  provideHttpClient,
-  withFetch,
-  withInterceptorsFromDi,
-} from '@angular/common/http'
-import { AuthInterceptor } from './core/interceptors/auth.interceptor'
-
-// scroll
-const scrollConfig: InMemoryScrollingOptions = {
-  scrollPositionRestoration: 'top',
-  anchorScrolling: 'enabled',
-}
-
-const inMemoryScrollingFeatures: InMemoryScrollingFeature =
-  withInMemoryScrolling(scrollConfig)
+import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { provideRouter, withComponentInputBinding, withViewTransitions } from '@angular/router';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import { routes } from './app.routes';
+import { apiInterceptor } from './core/http/api-interceptor';
+import { errorInterceptor } from './core/http/error-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    DatePipe,
-    DecimalPipe,
-    provideZoneChangeDetection({
-      eventCoalescing: false,
-      runCoalescing: false,
-      ignoreChangesOutsideZone: true,
-    }),
-    provideRouter(routes, inMemoryScrollingFeatures),
-    provideStore(rootReducer),
-    provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
-    provideEffects(AuthenticationEffects),
-    provideHttpClient(withFetch(), withInterceptorsFromDi()),
+    provideBrowserGlobalErrorListeners(),
+    provideRouter(routes, withComponentInputBinding(), withViewTransitions()),
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([apiInterceptor, errorInterceptor]),
+    ),
   ],
-}
+};
