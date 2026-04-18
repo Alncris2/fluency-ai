@@ -20,6 +20,12 @@ export interface RegisterPayload {
   password_confirmation: string
 }
 
+interface AuthResponse {
+  user: { id: number; name: string; email: string }
+  token: string
+  onboarding_completed?: boolean
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
   user: User | null = null
@@ -30,26 +36,32 @@ export class AuthenticationService {
   constructor(private http: HttpClient) {}
 
   login(email: string, password: string): Observable<User> {
-    return this.http.post<User>(`/api/login`, { email, password }).pipe(
-      map((user) => {
-        if (user && user.token) {
-          this.user = user
-          this.saveSession(user.token)
-          this.saveOnboardingStatus(user.onboarding_completed ?? false)
+    return this.http.post<AuthResponse>(`/api/login`, { email, password }).pipe(
+      map((response) => {
+        const user: User = {
+          ...response.user,
+          token: response.token,
+          onboarding_completed: response.onboarding_completed,
         }
+        this.user = user
+        this.saveSession(response.token)
+        this.saveOnboardingStatus(response.onboarding_completed ?? false)
         return user
       })
     )
   }
 
   register(payload: RegisterPayload): Observable<User> {
-    return this.http.post<User>(`/api/register`, payload).pipe(
-      map((user) => {
-        if (user && user.token) {
-          this.user = user
-          this.saveSession(user.token)
-          this.saveOnboardingStatus(false)
+    return this.http.post<AuthResponse>(`/api/register`, payload).pipe(
+      map((response) => {
+        const user: User = {
+          ...response.user,
+          token: response.token,
+          onboarding_completed: false,
         }
+        this.user = user
+        this.saveSession(response.token)
+        this.saveOnboardingStatus(false)
         return user
       })
     )
