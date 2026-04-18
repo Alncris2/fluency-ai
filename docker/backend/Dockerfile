@@ -120,6 +120,7 @@ RUN chmod -R 777 /var/www/storage /var/www/bootstrap/cache /var/www/public
 # ------------------------------------------------------------
 USER root
 COPY docker/backend/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY docker/backend/php/www.conf /usr/local/etc/php-fpm.d/www.conf
 COPY docker/backend/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
