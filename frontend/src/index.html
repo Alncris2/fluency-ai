@@ -3,11 +3,10 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>Rizz</title>
+  <title>Fluency AI</title>
   <base href="/" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAbvyBxmMbFhrzP9Z8moyYr6dCr-pzjhBE"></script>
   <style>
     #splash-screen {
       position: fixed;
@@ -29,6 +28,7 @@
     #splash-screen.remove {
       animation: fadeout 0.7s forwards;
       z-index: 0;
+      pointer-events: none;
     }
 
     @keyframes fadeout {
@@ -43,14 +43,62 @@
 <body>
   <app-root></app-root>
   <div id="splash-screen">
-    <img src="./assets/images/logo-sm.png" alt="logo-small" width="46" height="46" />
-    <img alt="Logo" src="./assets/images/logo-dark.png" width="59" height="24" style="margin-left: 6px" />
+    <img
+      src="./assets/images/logo-sm.png"
+      alt="Fluency AI"
+      width="46"
+      height="46"
+    />
+    <img
+      alt="Fluency AI"
+      src="./assets/images/logo-dark.png"
+      width="59"
+      height="24"
+      style="margin-left: 6px"
+    />
   </div>
   <script>
-    document.querySelector('app-root')
-      ?.addEventListener('DOMNodeInserted', () => {
-        document.querySelector('#splash-screen')?.classList.add('remove')
+    ;(() => {
+      const splashScreen = document.querySelector('#splash-screen')
+      const appRoot = document.querySelector('app-root')
+
+      if (!splashScreen || !appRoot) {
+        return
+      }
+
+      let splashRemoved = false
+
+      const removeSplash = () => {
+        if (splashRemoved) {
+          return
+        }
+
+        splashRemoved = true
+        splashScreen.classList.add('remove')
+        setTimeout(() => splashScreen.remove(), 800)
+      }
+
+      const appRendered = () => appRoot.childNodes.length > 0
+
+      if (appRendered()) {
+        removeSplash()
+        return
+      }
+
+      const observer = new MutationObserver(() => {
+        if (!appRendered()) {
+          return
+        }
+
+        observer.disconnect()
+        removeSplash()
       })
+
+      observer.observe(appRoot, { childList: true, subtree: true })
+
+      window.addEventListener('load', removeSplash, { once: true })
+      setTimeout(removeSplash, 4000)
+    })()
   </script>
   <noscript>You need to enable JavaScript to run this app.</noscript>
 </body>

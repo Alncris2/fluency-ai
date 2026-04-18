@@ -13,9 +13,7 @@ RUN apt-get update && apt-get install -y \
     libxrender1 libfontconfig1 libx11-dev libxtst6 \
     wget zip unzip supervisor procps \
     libmagickwand-dev imagemagick \
-    libpq-dev \
-    && wget https://github.com/h4cc/wkhtmltopdf-amd64/blob/master/bin/wkhtmltopdf-amd64?raw=true -O /usr/local/bin/wkhtmltopdf \
-    && chmod +x /usr/local/bin/wkhtmltopdf
+    libpq-dev
 
 # ------------------------------------------------------------
 # Clear cache
