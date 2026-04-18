@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
     libxrender1 libfontconfig1 libx11-dev libxtst6 \
     wget zip unzip supervisor procps \
     libmagickwand-dev imagemagick \
+    libpq-dev \
     && wget https://github.com/h4cc/wkhtmltopdf-amd64/blob/master/bin/wkhtmltopdf-amd64?raw=true -O /usr/local/bin/wkhtmltopdf \
     && chmod +x /usr/local/bin/wkhtmltopdf
 
@@ -25,7 +26,7 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 # PHP extensions
 # ------------------------------------------------------------
 RUN docker-php-ext-configure gd --with-webp --with-jpeg \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd intl soap xml zip sockets \
+    && docker-php-ext-install pdo_pgsql pgsql mbstring exif pcntl bcmath gd intl soap xml zip sockets \
     && docker-php-ext-configure intl
 
 # Redis only (removed Swoole/Octane for development)
@@ -120,11 +121,10 @@ RUN chmod -R 777 /var/www/storage /var/www/bootstrap/cache /var/www/public
 # ------------------------------------------------------------
 USER root
 COPY docker/backend/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY docker/backend/php/www.conf /usr/local/etc/php-fpm.d/www.conf
-COPY docker/backend/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+
+# Voltar pro usuário laravel
+USER laravel
 
 EXPOSE 9000
 
-ENTRYPOINT ["/entrypoint.sh"]
 CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
