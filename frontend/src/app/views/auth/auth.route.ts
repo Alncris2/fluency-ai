@@ -4,6 +4,7 @@ import { LoginComponent } from './login/login.component'
 import { RegisterComponent } from './register/register.component'
 import { RecoverPwComponent } from './recover-pw/recover-pw.component'
 import { OnboardingComponent } from './onboarding/onboarding.component'
+import { authGuard } from '@/app/core/guards/auth.guard'
 
 export const AUTH_ROUTES: Route[] = [
   {
@@ -29,6 +30,7 @@ export const AUTH_ROUTES: Route[] = [
   {
     path: 'onboarding',
     component: OnboardingComponent,
+    canActivate: [authGuard],
     data: { title: 'Onboarding' },
   },
 ]

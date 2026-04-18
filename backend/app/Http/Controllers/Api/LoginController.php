@@ -25,6 +25,7 @@ class LoginController extends Controller
         return response()->json([
             'user' => $user,
             'token' => $token,
+            'student_id' => $student?->id,
             'onboarding_completed' => $onboardingCompleted,
         ]);
     }

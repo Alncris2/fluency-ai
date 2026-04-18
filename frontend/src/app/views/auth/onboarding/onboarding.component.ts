@@ -9,6 +9,7 @@ import {
 import { Router } from '@angular/router'
 import { Store } from '@ngrx/store'
 import { OnboardingService } from './onboarding.service'
+import { OnboardingProgressService } from './onboarding-progress.service'
 import { AuthenticationService } from '@/app/core/service/auth.service'
 import { getUser } from '@/app/store/authentication/authentication.selector'
 import { take } from 'rxjs/operators'
@@ -35,6 +36,7 @@ export class OnboardingComponent implements OnInit {
   private router = inject(Router)
   private store = inject(Store)
   private onboardingService = inject(OnboardingService)
+  private progressService = inject(OnboardingProgressService)
   private authService = inject(AuthenticationService)
 
   readonly goalOptions = [
@@ -95,6 +97,8 @@ export class OnboardingComponent implements OnInit {
       days: [[] as string[], [Validators.required]],
       time_of_day: [[] as string[], [Validators.required]],
     })
+
+    this.restoreProgress()
   }
 
   get currentForm(): FormGroup {
@@ -124,6 +128,7 @@ export class OnboardingComponent implements OnInit {
     if (!this.canAdvance()) return
     if (this.currentStep < this.totalSteps) {
       this.currentStep++
+      this.saveProgress()
     }
   }
 
@@ -195,7 +200,7 @@ export class OnboardingComponent implements OnInit {
       .pipe(take(1))
       .subscribe({
         next: (user) => {
-          const studentId = user?.id
+          const studentId = user?.student_id
           if (!studentId) {
             this.errorMessage = 'Usuário não autenticado. Faça login novamente.'
             this.isLoading = false
@@ -232,5 +237,30 @@ export class OnboardingComponent implements OnInit {
           this.errorMessage = 'Erro ao obter dados do usuário.'
         },
       })
+  }
+
+  private restoreProgress(): void {
+    this.progressService.load().pipe(take(1)).subscribe({
+      next: ({ progress }) => {
+        if (!progress) return
+        if (progress.step1) this.step1Form.patchValue(progress.step1)
+        if (progress.step2) this.step2Form.patchValue(progress.step2)
+        if (progress.step3) this.step3Form.patchValue(progress.step3)
+        if (progress.step4) this.step4Form.patchValue(progress.step4)
+        if (progress.currentStep) this.currentStep = progress.currentStep
+      },
+      error: () => {},
+    })
+  }
+
+  private saveProgress(): void {
+    const progress = {
+      currentStep: this.currentStep,
+      step1: this.step1Form.value,
+      step2: this.step2Form.value,
+      step3: this.step3Form.value,
+      step4: this.step4Form.value,
+    }
+    this.progressService.save(progress).pipe(take(1)).subscribe()
   }
 }

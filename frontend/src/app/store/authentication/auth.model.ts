@@ -3,5 +3,6 @@ export class User {
   name?: string
   email?: string
   token?: string
+  student_id?: string
   onboarding_completed?: boolean
 }

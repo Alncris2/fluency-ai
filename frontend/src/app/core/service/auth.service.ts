@@ -10,6 +10,7 @@ export interface User {
   name?: string
   email?: string
   token?: string
+  student_id?: string
   onboarding_completed?: boolean
 }
 
@@ -23,6 +24,7 @@ export interface RegisterPayload {
 interface AuthResponse {
   user: { id: number; name: string; email: string }
   token: string
+  student_id?: string
   onboarding_completed?: boolean
 }
 
@@ -41,6 +43,7 @@ export class AuthenticationService {
         const user: User = {
           ...response.user,
           token: response.token,
+          student_id: response.student_id,
           onboarding_completed: response.onboarding_completed,
         }
         this.user = user
@@ -57,6 +60,7 @@ export class AuthenticationService {
         const user: User = {
           ...response.user,
           token: response.token,
+          student_id: response.student_id,
           onboarding_completed: false,
         }
         this.user = user
