@@ -7,11 +7,9 @@ import {
   Validators,
 } from '@angular/forms'
 import { Router } from '@angular/router'
-import { Store } from '@ngrx/store'
 import { OnboardingService } from './onboarding.service'
 import { OnboardingProgressService } from './onboarding-progress.service'
 import { AuthenticationService } from '@/app/core/service/auth.service'
-import { getUser } from '@/app/store/authentication/authentication.selector'
 import { take } from 'rxjs/operators'
 
 @Component({
@@ -34,7 +32,6 @@ export class OnboardingComponent implements OnInit {
 
   private fb = inject(FormBuilder)
   private router = inject(Router)
-  private store = inject(Store)
   private onboardingService = inject(OnboardingService)
   private progressService = inject(OnboardingProgressService)
   private authService = inject(AuthenticationService)
@@ -192,51 +189,40 @@ export class OnboardingComponent implements OnInit {
 
   submit(): void {
     if (!this.canAdvance()) return
+
+    const studentId = this.authService.studentId
+    if (!studentId) {
+      this.errorMessage = 'Usuário não autenticado. Faça login novamente.'
+      return
+    }
+
     this.isLoading = true
     this.errorMessage = null
 
-    this.store
-      .select(getUser)
-      .pipe(take(1))
-      .subscribe({
-        next: (user) => {
-          const studentId = user?.student_id
-          if (!studentId) {
-            this.errorMessage = 'Usuário não autenticado. Faça login novamente.'
-            this.isLoading = false
-            return
-          }
+    const payload = {
+      preferred_name: this.step1Form.get('preferred_name')?.value,
+      goal: this.step1Form.get('goal')?.value,
+      english_level: this.step2Form.get('english_level')?.value,
+      interests: this.step3Form.get('interests')?.value,
+      availability: {
+        days: this.step4Form.get('days')?.value,
+        time_of_day: this.step4Form.get('time_of_day')?.value,
+      },
+    }
 
-          const payload = {
-            preferred_name: this.step1Form.get('preferred_name')?.value,
-            goal: this.step1Form.get('goal')?.value,
-            english_level: this.step2Form.get('english_level')?.value,
-            interests: this.step3Form.get('interests')?.value,
-            availability: {
-              days: this.step4Form.get('days')?.value,
-              time_of_day: this.step4Form.get('time_of_day')?.value,
-            },
-          }
-
-          this.onboardingService.savePreferences(studentId, payload).subscribe({
-            next: () => {
-              this.isLoading = false
-              this.authService.markOnboardingCompleted()
-              this.router.navigate(['/dashboard'])
-            },
-            error: (err) => {
-              this.isLoading = false
-              this.errorMessage =
-                err?.error?.message ??
-                'Ocorreu um erro ao salvar suas preferências. Tente novamente.'
-            },
-          })
-        },
-        error: () => {
-          this.isLoading = false
-          this.errorMessage = 'Erro ao obter dados do usuário.'
-        },
-      })
+    this.onboardingService.savePreferences(studentId, payload).subscribe({
+      next: () => {
+        this.isLoading = false
+        this.authService.markOnboardingCompleted()
+        this.router.navigate(['/dashboard'])
+      },
+      error: (err) => {
+        this.isLoading = false
+        this.errorMessage =
+          err?.error?.message ??
+          'Ocorreu um erro ao salvar suas preferências. Tente novamente.'
+      },
+    })
   }
 
   private restoreProgress(): void {

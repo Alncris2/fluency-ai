@@ -48,6 +48,7 @@ export class AuthenticationService {
         }
         this.user = user
         this.saveSession(response.token)
+        if (response.student_id) this.saveStudentId(response.student_id)
         this.saveOnboardingStatus(response.onboarding_completed ?? false)
         return user
       })
@@ -65,6 +66,7 @@ export class AuthenticationService {
         }
         this.user = user
         this.saveSession(response.token)
+        if (response.student_id) this.saveStudentId(response.student_id)
         this.saveOnboardingStatus(false)
         return user
       })
@@ -102,7 +104,12 @@ export class AuthenticationService {
   removeSession(): void {
     this.cookieService.delete(this.authSessionKey)
     localStorage.removeItem('fluency_token')
+    localStorage.removeItem('fluency_student_id')
     localStorage.removeItem('fluency_onboarding_completed')
+  }
+
+  get studentId(): string | null {
+    return localStorage.getItem('fluency_student_id')
   }
 
   get onboardingCompleted(): boolean {
@@ -111,6 +118,10 @@ export class AuthenticationService {
 
   markOnboardingCompleted(): void {
     this.saveOnboardingStatus(true)
+  }
+
+  private saveStudentId(id: string): void {
+    localStorage.setItem('fluency_student_id', id)
   }
 
   private saveOnboardingStatus(completed: boolean): void {
