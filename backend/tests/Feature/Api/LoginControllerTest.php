@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Api;
 
+use App\Models\Student;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -25,7 +26,46 @@ class LoginControllerTest extends TestCase
             ->assertJsonStructure([
                 'user' => ['id', 'name', 'email'],
                 'token',
+                'onboarding_completed',
             ]);
+    }
+
+    public function test_login_returns_onboarding_completed_false_without_student(): void
+    {
+        User::factory()->create($this->credentials);
+
+        $response = $this->postJson('/api/login', $this->credentials);
+
+        $response->assertOk()
+            ->assertJson(['onboarding_completed' => false]);
+    }
+
+    public function test_login_returns_onboarding_completed_false_when_preferences_empty(): void
+    {
+        User::factory()->create($this->credentials);
+        Student::factory()->create([
+            'email' => $this->credentials['email'],
+            'preferences' => null,
+        ]);
+
+        $response = $this->postJson('/api/login', $this->credentials);
+
+        $response->assertOk()
+            ->assertJson(['onboarding_completed' => false]);
+    }
+
+    public function test_login_returns_onboarding_completed_true_when_preferences_set(): void
+    {
+        User::factory()->create($this->credentials);
+        Student::factory()->create([
+            'email' => $this->credentials['email'],
+            'preferences' => ['goal' => 'travel', 'interests' => ['music']],
+        ]);
+
+        $response = $this->postJson('/api/login', $this->credentials);
+
+        $response->assertOk()
+            ->assertJson(['onboarding_completed' => true]);
     }
 
     public function test_wrong_password_returns_401(): void

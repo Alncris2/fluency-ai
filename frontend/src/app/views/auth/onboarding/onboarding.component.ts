@@ -9,6 +9,7 @@ import {
 import { Router } from '@angular/router'
 import { Store } from '@ngrx/store'
 import { OnboardingService } from './onboarding.service'
+import { AuthenticationService } from '@/app/core/service/auth.service'
 import { getUser } from '@/app/store/authentication/authentication.selector'
 import { take } from 'rxjs/operators'
 
@@ -34,6 +35,7 @@ export class OnboardingComponent implements OnInit {
   private router = inject(Router)
   private store = inject(Store)
   private onboardingService = inject(OnboardingService)
+  private authService = inject(AuthenticationService)
 
   readonly goalOptions = [
     { value: 'travel', label: 'Viagem' },
@@ -214,6 +216,7 @@ export class OnboardingComponent implements OnInit {
           this.onboardingService.savePreferences(studentId, payload).subscribe({
             next: () => {
               this.isLoading = false
+              this.authService.markOnboardingCompleted()
               this.router.navigate(['/dashboard'])
             },
             error: (err) => {

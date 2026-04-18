@@ -3,4 +3,5 @@ export class User {
   name?: string
   email?: string
   token?: string
+  onboarding_completed?: boolean
 }

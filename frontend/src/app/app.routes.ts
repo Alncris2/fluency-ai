@@ -4,6 +4,7 @@ import { Error404Component } from './views/auth/error404/error404.component'
 import { Error500Component } from './views/auth/error500/error500.component'
 import { MaintenanceComponent } from './views/auth/maintenance/maintenance.component'
 import { authGuard } from './core/guards/auth.guard'
+import { onboardingGuard } from './core/guards/onboarding.guard'
 
 export const routes: Routes = [
   {
@@ -14,7 +15,7 @@ export const routes: Routes = [
   {
     path: '',
     component: LayoutComponent,
-    canActivate: [authGuard],
+    canActivate: [authGuard, onboardingGuard],
     loadChildren: () =>
       import('./views/views.route').then((mod) => mod.VIEW_ROUTES),
   },

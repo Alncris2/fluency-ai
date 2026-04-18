@@ -10,6 +10,7 @@ export interface User {
   name?: string
   email?: string
   token?: string
+  onboarding_completed?: boolean
 }
 
 export interface RegisterPayload {
@@ -34,6 +35,7 @@ export class AuthenticationService {
         if (user && user.token) {
           this.user = user
           this.saveSession(user.token)
+          this.saveOnboardingStatus(user.onboarding_completed ?? false)
         }
         return user
       })
@@ -46,6 +48,7 @@ export class AuthenticationService {
         if (user && user.token) {
           this.user = user
           this.saveSession(user.token)
+          this.saveOnboardingStatus(false)
         }
         return user
       })
@@ -83,6 +86,19 @@ export class AuthenticationService {
   removeSession(): void {
     this.cookieService.delete(this.authSessionKey)
     localStorage.removeItem('fluency_token')
+    localStorage.removeItem('fluency_onboarding_completed')
+  }
+
+  get onboardingCompleted(): boolean {
+    return localStorage.getItem('fluency_onboarding_completed') === 'true'
+  }
+
+  markOnboardingCompleted(): void {
+    this.saveOnboardingStatus(true)
+  }
+
+  private saveOnboardingStatus(completed: boolean): void {
+    localStorage.setItem('fluency_onboarding_completed', String(completed))
   }
 
   private clearSession(): void {

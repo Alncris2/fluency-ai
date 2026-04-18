@@ -21,9 +21,13 @@ export class AuthenticationEffects {
         return this.AuthenticationService.login(email, password).pipe(
           map((user) => {
             if (user) {
-              const returnUrl =
-                this.route.snapshot.queryParams['returnUrl'] || '/'
-              this.router.navigateByUrl(returnUrl)
+              if (user.onboarding_completed === false) {
+                this.router.navigate(['/auth/onboarding'])
+              } else {
+                const returnUrl =
+                  this.route.snapshot.queryParams['returnUrl'] || '/'
+                this.router.navigateByUrl(returnUrl)
+              }
             }
             return loginSuccess({ user })
           }),
