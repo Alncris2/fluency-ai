@@ -10,7 +10,9 @@ import {
 } from '@angular/forms'
 import { Router, RouterLink } from '@angular/router'
 import { HttpErrorResponse } from '@angular/common/http'
+import { Store } from '@ngrx/store'
 import { AuthenticationService } from '@/app/core/service/auth.service'
+import { loginSuccess } from '@/app/store/authentication/authentication.actions'
 import { Subject, takeUntil } from 'rxjs'
 
 @Component({
@@ -31,6 +33,7 @@ export class RegisterComponent implements OnDestroy {
   private fb = inject(FormBuilder)
   private authService = inject(AuthenticationService)
   private router = inject(Router)
+  private store = inject(Store)
   private destroy$ = new Subject<void>()
 
   constructor() {
@@ -97,7 +100,8 @@ export class RegisterComponent implements OnDestroy {
       })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: () => {
+        next: (user) => {
+          this.store.dispatch(loginSuccess({ user }))
           this.isLoading = false
           this.router.navigateByUrl('/auth/onboarding')
         },
