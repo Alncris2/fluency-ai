@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { of } from 'rxjs'
-import { catchError, exhaustMap, map } from 'rxjs/operators'
+import { catchError, exhaustMap, map, tap } from 'rxjs/operators'
 import {
   login,
   loginFailure,
@@ -36,11 +36,16 @@ export class AuthenticationEffects {
   logout$ = createEffect(() =>
     this.actions$.pipe(
       ofType(logout),
-      exhaustMap(() => {
-        this.AuthenticationService.logout()
-        this.router.navigate(['/auth/log-in'])
-        return of(logoutSuccess())
-      })
+      exhaustMap(() =>
+        this.AuthenticationService.logout().pipe(
+          tap(() => this.router.navigate(['/auth/log-in'])),
+          map(() => logoutSuccess()),
+          catchError(() => {
+            this.router.navigate(['/auth/log-in'])
+            return of(logoutSuccess())
+          })
+        )
+      )
     )
   )
 

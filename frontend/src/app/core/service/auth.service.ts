@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
-import { map } from 'rxjs/operators'
+import { Observable } from 'rxjs'
+import { map, tap } from 'rxjs/operators'
 
 import { CookieService } from 'ngx-cookie-service'
 
@@ -27,7 +28,7 @@ export class AuthenticationService {
 
   constructor(private http: HttpClient) {}
 
-  login(email: string, password: string) {
+  login(email: string, password: string): Observable<User> {
     return this.http.post<User>(`/api/login`, { email, password }).pipe(
       map((user) => {
         if (user && user.token) {
@@ -39,7 +40,7 @@ export class AuthenticationService {
     )
   }
 
-  register(payload: RegisterPayload) {
+  register(payload: RegisterPayload): Observable<User> {
     return this.http.post<User>(`/api/register`, payload).pipe(
       map((user) => {
         if (user && user.token) {
@@ -51,9 +52,23 @@ export class AuthenticationService {
     )
   }
 
-  logout(): void {
-    this.removeSession()
-    this.user = null
+  logout(): Observable<void> {
+    return this.http.post<void>(`/api/logout`, {}).pipe(
+      tap(() => this.clearSession())
+    )
+  }
+
+  forgotPassword(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`/api/forgot-password`, { email })
+  }
+
+  resetPassword(payload: {
+    token: string
+    email: string
+    password: string
+    password_confirmation: string
+  }): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`/api/reset-password`, payload)
   }
 
   get session(): string {
@@ -68,5 +83,10 @@ export class AuthenticationService {
   removeSession(): void {
     this.cookieService.delete(this.authSessionKey)
     localStorage.removeItem('fluency_token')
+  }
+
+  private clearSession(): void {
+    this.removeSession()
+    this.user = null
   }
 }
